@@ -1,29 +1,77 @@
-#'Function to run mice parallel
+#'Parallel function for MICE 
 #'
-#'This is a wrapper function for mice. With this function, imputations will be 
-#'performed parallel using multiple cores. Consequently the procedure is speeded 
-#'up. 
+#'This is a wrapper function for \code{\link{mice}}, performing imputations in a 
+#'parallel setting by making use of multiple cores. As a result, the imputation 
+#'procedure is speeded up, which can be useful in case of large datasets or a high 
+#'number of imputations. 
 #'
-#'@param
+#'This function is built upon package \code{\link{parallel}}, which is a base
+#'package for R versions 2.14.0 and later. We have chosen to use parallel function 
+#'\code{parLapply} to allow the use of \code{parallelMICE} on Mac, Linux and Windows
+#'systems. For the same reason, we use the Parallel Socket Cluster (PSOCK) type. 
 #'
-#'@return
+#'On systems other than Windows, it is recommended to change the cluster type to 
+#'\code{FORK}, as it is better in handling the memory space. When memory issues 
+#'arise on a Windows system, we advise to store the multiply imputed datasets, 
+#'clean the memory by using \code{\link{rm}} and \code{\link{gc}} and make another 
+#'run using the same settings. For more tips about dealing with memory problems, 
+#'we refer to Max Gordon's document *How-to go parallel in R – basics + tips*.
 #'
-#'@author Rianne Schouten, Gerko Vink, Peter Lugtig, 2016
-#'@seealso
-#'@references
-#'@examples 
+#'This wrapper function combines the output of \code{\link{parLapply}} with
+#'function \code{\link{ibind}} in \code{\pkg{mice}}. A \code{mids} object is returned
+#'and can be used for further analyses. 
+#'
+#'Note that if a seed value is desired, the seed should be entered to this function
+#'with argument \code{seed}. Seed values outside the wrapper function (in an 
+#'R-script or passed to \code{\link{mice}} will not work in this wrapper function. 
+#'We refer to the manual of \code{\pkg{parallel}} for an explanation on this matter.  
+#'
+#'@param data A data frame or matrix containing the incomplete data. This is similar
+#'to the first argument of \code{\link{mice}}.
+#'@param n.core A scalar indicating the number of cores that should be used. Default
+#'is the number of possible cores - 1. 
+#'@param n.imp.core A scalar indicating the number of imputations per core. The 
+#'total number of imputations will be equal to n.core * n.imp.core. 
+#'@param seed A scalar to be used as the seed value. It is recommended to put the 
+#'seed value here and not outside this function, as otherwise the parallel processes
+#'will be performed with separate, random seeds. 
+#'@param ... Named arguments that are passed down to function \code{\link{mice}} or
+#'\code{\link{makeCluster}}. 
+#'
+#'@return A mids object as defined by \code{\link{mids-class}}
+#'
+#'@author Gerko Vink, Rianne Schouten, 2016
+#'@seealso \code{\pkg{parallel}}, \code{\link{parLapply}}, \code{\link{makeCluster}},
+#'\code{\link{mice}}, \code{\link{mids-class}}
+#'@references 
+#'Gordon, M. (2015). How-to go parallel in R – basics + tips. Available through 
+#'[link](http://gforge.se/2015/02/how-to-go-parallel-in-r-basics-tips/)
+#'
+#'Van Buuren, S. (2012). \emph{Flexible imputation of missing data.} 
+#'Boca Raton, FL.: Chapman & Hall/CRC Press.
+#'@examples
+#'# 150 imputations in dataset nhanes, performed by 3 cores  
+#'result1 <- parallelMICE(data = nhanes, n.core = 3, n.imp.core = 50)
+#'# Making use of arguments in \code{mice}. 
+#'result2 <- parallelMICE(data = nhanes, method = "norm.nob", m = 100)
+#'with(result2, lm(bmi ~ hyp))
+#'# On system other than Windows
+#'result3 <- parallelMICE(data = nhanes, type = "FORK", n.imp.core = 100)
+#' 
 #'@export
-parallelMICE <- function(data, n.imp.core = 1, m = 30,
-                         n.core = detectCores() - 1, 
-                         seed = NULL, ...){
+parallelMICE <- function(data, n.core = detectCores() - 1, n.imp.core = 30,  
+                         seed = NULL, m = NULL, ...){
   suppressMessages(require(parallel))
-  cl <- makeCluster(n.core)
+  cl <- makeCluster(n.core, ...)
   clusterEvalQ(cl, library(mice))
   if (!is.null(seed)) {
     clusterSetRNGStream(cl, seed)
   }
+  if (!is.null(m)) {
+    n.imp.core <- round(m / n.core)
+  }
   imps <- parLapply(cl = cl, X = 1:n.core, fun = function(empty){
-    mice(nhanes, print = FALSE, m = m, ...)
+    mice(data, print = FALSE, m = n.imp.core * n.core, ...)
     })
   stopCluster(cl)
   imp <- ibind(imps[[1]], imps[[2]])
@@ -32,9 +80,6 @@ parallelMICE <- function(data, n.imp.core = 1, m = 30,
   }
   return(imp)
 }
-
-result1 <- parallelMICE(data = nhanes, seed = 10,
-                        m = 100, method = "norm.nob")
 
 # Check wheter it is faster, ibind is slowing things down
 steps <- seq(10, 1000, 20)
