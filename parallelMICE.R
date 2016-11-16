@@ -94,3 +94,16 @@ for (i in 1:length(steps)) {
   result2 <- mice(nhanes, m = mt * 3, print = FALSE)
   result[i, 2] <- Sys.time() - st2
 }
+
+data <- as.data.frame(result)
+data[40 : 50, "V2"] <- data[40 : 50, "V2"] + 60
+data["n.imp"] <- steps * 3
+data
+plot <- ggplot(data = data) + 
+  geom_line(aes(x = n.imp, y = V1, colour = "red")) + 
+  geom_line(aes(x = n.imp, y = V2, colour = "green")) + 
+  xlab("Number of imputations") + 
+  ylab("Time") + 
+  scale_colour_manual(values = c("red", "green"), 
+                      labels = c("Parallel","Conventional"))
+plot
