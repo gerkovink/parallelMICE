@@ -1,9 +1,8 @@
 #'Parallel function for MICE 
 #'
-#'This is a wrapper function for \code{\link{mice}}, performing imputations in a 
-#'parallel setting by making use of multiple cores. As a result, the imputation 
-#'procedure is speeded up, which can be useful in case of large datasets or a high 
-#'number of imputations. 
+#'This is a wrapper function for \code{\link{mice}}, using multiple cores to 
+#'execute \code{\link{mice}} in parallel. As a result, the imputation 
+#'procedure is sped up, which might be useful in general.
 #'
 #'This function is built upon package \code{\link{parallel}}, which is a base
 #'package for R versions 2.14.0 and later. We have chosen to use parallel function 
