@@ -58,8 +58,9 @@
 #'result3 <- parallelMICE(data = nhanes, type = "FORK", n.imp.core = 100)
 #' 
 #'@export
-parallelMICE <- function(data, n.core = detectCores() - 1, n.imp.core = 30,  
+parlMICE <- function(data, n.core = detectCores(logical = FALSE) - 1, n.imp.core = 2,  
                          seed = NULL, m = NULL, ...){
+  input <- data
   suppressMessages(require(parallel))
   cl <- makeCluster(n.core, ...)
   clusterEvalQ(cl, library(mice))
@@ -70,7 +71,7 @@ parallelMICE <- function(data, n.core = detectCores() - 1, n.imp.core = 30,
     n.imp.core <- round(m / n.core)
   }
   imps <- parLapply(cl = cl, X = 1:n.core, fun = function(empty){
-    mice(data, print = FALSE, m = n.imp.core * n.core, ...)
+    mice(data = input, print = FALSE, m = n.imp.core * n.core, ...)
     })
   stopCluster(cl)
   imp <- ibind(imps[[1]], imps[[2]])
