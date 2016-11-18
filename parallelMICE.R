@@ -22,13 +22,13 @@
 #'
 #'Note that if a seed value is desired, the seed should be entered to this function
 #'with argument \code{seed}. Seed values outside the wrapper function (in an 
-#'R-script or passed to \code{\link{mice}} will not work in this wrapper function. 
+#'R-script or passed to \code{\link{mice}}) will not result to reproducible results. 
 #'We refer to the manual of \code{\pkg{parallel}} for an explanation on this matter.  
 #'
-#'@param data A data frame or matrix containing the incomplete data. This is similar
-#'to the first argument of \code{\link{mice}}.
+#'@param data A data frame or matrix containing the incomplete data. Similar to 
+#'the first argument of \code{\link{mice}}.
 #'@param n.core A scalar indicating the number of cores that should be used. Default
-#'is the number of possible cores - 1. 
+#'is the number of logical cores minus 1. 
 #'@param n.imp.core A scalar indicating the number of imputations per core. The 
 #'total number of imputations will be equal to n.core * n.imp.core. 
 #'@param seed A scalar to be used as the seed value. It is recommended to put the 
@@ -54,15 +54,15 @@
 #'# Making use of arguments in \code{mice}. 
 #'result2 <- parallelMICE(data = nhanes, method = "norm.nob", m = 100)
 #'with(result2, lm(bmi ~ hyp))
-#'# On system other than Windows
+#'# On systems other than Windows, use type = "FORK"
 #'result3 <- parallelMICE(data = nhanes, type = "FORK", n.imp.core = 100)
 #' 
 #'@export
-parlMICE <- function(data, n.core = detectCores(logical = FALSE) - 1, n.imp.core = 2,  
-                         seed = NULL, m = NULL, ...){
-  input <- data
+parlMICE <- function(data, n.core = detectCores() - 1, n.imp.core = 2,  
+                     seed = NULL, m = NULL, ...){
   suppressMessages(require(parallel))
   cl <- makeCluster(n.core, ...)
+  clusterExport(cl, varlist = "data", envir = environment())
   clusterEvalQ(cl, library(mice))
   if (!is.null(seed)) {
     clusterSetRNGStream(cl, seed)
@@ -70,13 +70,17 @@ parlMICE <- function(data, n.core = detectCores(logical = FALSE) - 1, n.imp.core
   if (!is.null(m)) {
     n.imp.core <- round(m / n.core)
   }
-  imps <- parLapply(cl = cl, X = 1:n.core, fun = function(empty){
-    mice(data = input, print = FALSE, m = n.imp.core * n.core, ...)
+  imps <- parLapply(cl = cl, X = 1:n.core, fun = function(i){
+    mice(data, print = FALSE, m = n.imp.core * n.core, ...)
     })
   stopCluster(cl)
-  imp <- ibind(imps[[1]], imps[[2]])
-  for (i in 3:length(imps)) {
-    imp <- ibind(imp, imps[[i]])
+  imp <- imps[[1]]
+  if (length(imps) > 1) {
+    for (i in 2:length(imps)) {
+      imp <- ibind(imp, imps[[i]])
+    }
   }
   return(imp)
 }
+
+
