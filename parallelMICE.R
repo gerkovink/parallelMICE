@@ -50,12 +50,12 @@
 #'Boca Raton, FL.: Chapman & Hall/CRC Press.
 #'@examples
 #'# 150 imputations in dataset nhanes, performed by 3 cores  
-#'result1 <- parallelMICE(data = nhanes, n.core = 3, n.imp.core = 50)
+#'result1 <- parlMICE(data = nhanes, n.core = 3, n.imp.core = 50)
 #'# Making use of arguments in \code{mice}. 
-#'result2 <- parallelMICE(data = nhanes, method = "norm.nob", m = 100)
+#'result2 <- parlMICE(data = nhanes, method = "norm.nob", m = 100)
 #'with(result2, lm(bmi ~ hyp))
 #'# On systems other than Windows, use type = "FORK"
-#'result3 <- parallelMICE(data = nhanes, type = "FORK", n.imp.core = 100)
+#'result3 <- parlMICE(data = nhanes, type = "FORK", n.imp.core = 100)
 #' 
 #'@export
 parlMICE <- function(data, n.core = detectCores() - 1, n.imp.core = 2,  
@@ -68,7 +68,7 @@ parlMICE <- function(data, n.core = detectCores() - 1, n.imp.core = 2,
     clusterSetRNGStream(cl, seed)
   }
   if (!is.null(m)) {
-    n.imp.core <- round(m / n.core)
+    n.imp.core <- ceiling(m / n.core)
   }
   imps <- parLapply(cl = cl, X = 1:n.core, fun = function(i){
     mice(data, print = FALSE, m = n.imp.core, ...)
