@@ -2,7 +2,7 @@
 title: "Wrapper function `parlMICE`"
 author: "Gerko Vink & Rianne Schouten"
 date: "Thursday, November 17th, 2016"
-output: html_document
+output: pdf_document
 header-includes:
 - \usepackage{caption}
 - \usepackage{natbib}
@@ -18,17 +18,13 @@ For big datasets or high number of imputations, performing multiple imputation w
 
 ### Gaining time with `parlMICE`
 
-In Figure \ref{fig1}, the processing time is compared between `mice` and `parlMICE`. Here, a dataset with 1000 cases and 4 variables is imputed for different `m` (starting from 6). Besides, multiple imputation with `parlMICE` is performed with 1, 2 and 3 cores. 
+In Figure 1, the processing time is compared between `mice` and `parlMICE`. Here, a dataset with 1000 cases and 4 variables is imputed for different `m` (starting from 6). Besides, multiple imputation with `parlMICE` is performed with 1, 2 and 3 cores. 
 
-\begin{figure}[h]
-  \includegraphics[width=\linewidth]{parlMICE.png}
-  \caption{Processing time when multiple imputations are performed with `mice` (conventional) and wrapper function `parlMICE` (1, 2 and 3 cores respectively). The data have 1000 cases and 4 variables, with a correlation of 0.5. 80 percent of the cases have one missing value based on MCAR missingness.}
-  \label{fig1}
-\end{figure}
+![Processing time when multiple imputations are performed with `mice` (conventional) and wrapper function `parlMICE` (1, 2 and 3 cores respectively). The dataset has 1000 cases and 4 variables with a correlation of 0.5. 80 percent of the cases have one missing value based on MCAR missingness.](parlMICE.png)
 
-From Figure \ref{fig1} it becomes apparent that for a small number of imputations, the conventional `mice` function works faster than the wrapper function. This is the case for `m` $\leq$ 35. From that point on, wrapper function `parlMICE` returns the imputations faster.
+From Figure 1 it becomes apparent that for a small number of imputations, the conventional `mice` function works faster than the wrapper function. This is the case for `m` $\leq$ 35. From that point on, wrapper function `parlMICE` returns the imputations faster.
 
-The right figure of Figure \ref{fig1} shows the processing time for very high number of imputations. After the intersection, the lines follow the same trend: 3 cores perform the work faster than 2 cores, which work faster than 1 core. Obviously, using `parlMICE` with 1 core is similar to function `mice`, as the figure shows with the red and blue lines.
+The right figure of Figure 1 shows the processing time for very high number of imputations. After the intersection, the lines follow the same trend: 3 cores perform the work faster than 2 cores, which work faster than 1 core. Obviously, using `parlMICE` with 1 core is similar to function `mice`, as the figure shows with the red and blue lines.
 
 Another test was run with a dataset with 10000 cases and 8 variables. For this dataset, `parlMICE` performed faster than `mice` starting from the first imputation. The time gain can easily reach 75 percent for 10 imputations and more.
 
