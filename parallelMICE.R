@@ -25,6 +25,9 @@
 #'R-script or passed to \code{\link{mice}}) will not result to reproducible results. 
 #'We refer to the manual of \code{\pkg{parallel}} for an explanation on this matter.  
 #'
+#'A vignette describing the use of `parlMICE` can be found in the \code{\pkg{mice}} 
+#'package or through Github: https://github.com/gerkovink/parallelMICE/blob/master. 
+#'
 #'@param data A data frame or matrix containing the incomplete data. Similar to 
 #'the first argument of \code{\link{mice}}.
 #'@param n.core A scalar indicating the number of cores that should be used. Default
@@ -39,9 +42,9 @@
 #'
 #'@return A mids object as defined by \code{\link{mids-class}}
 #'
-#'@author Gerko Vink, Rianne Schouten, 2016
+#'@author Gerko Vink, Rianne Schouten, 2016, with many thanks to Max Gordon. 
 #'@seealso \code{\pkg{parallel}}, \code{\link{parLapply}}, \code{\link{makeCluster}},
-#'\code{\link{mice}}, \code{\link{mids-class}}
+#'\code{\link{mice}}, \code{\link{mids-class}}, Vignette \emph{Wrapper function parlMICE}
 #'@references 
 #'Gordon, M. (2015). How-to go parallel in R – basics + tips. Available through 
 #'[link](http://gforge.se/2015/02/how-to-go-parallel-in-r-basics-tips/)
