@@ -2,10 +2,11 @@
 title: "Wrapper function `parlMICE`"
 author: "Gerko Vink & Rianne Schouten"
 date: "Thursday, November 17th, 2016"
-output: pdf_document
+output: html_document
 header-includes:
 - \usepackage{caption}
 - \usepackage{natbib}
+- \usepackage{blkarray}
 bibliography: References.bib
 ---
 
@@ -16,17 +17,44 @@ source("parallelMICE.R")
 
 For big datasets or high number of imputations, performing multiple imputation with function `mice` from package `mice` [@Stef2011] might take a long time. As a solution, wrapper function `parlMICE` was created to enable the imputation procedure to be run in parallel. This is done by dividing the imputations over multiple cores (or CPUs), thereby speeding up the process. 
 
-### Gaining time with `parlMICE`
+First, this vignette will show the time gain with `parlMICE` for a small and (relatively) large dataset. Second, `parlMICE`'s arguments will be disussed. For more information about running functions in parallel, we gladly refer to the `parallel` [manual](https://stat.ethz.ch/R-manual/R-devel/library/parallel/doc/parallel.pdf) and the [document](http://gforge.se/2015/02/how-to-go-parallel-in-r-basics-tips/) \emph{How-to-go parallel in R}, written by Max Gordon. We thank Max Gordon for his previous work on this subject. 
 
-In Figure 1, the processing time is compared between `mice` and `parlMICE`. Here, a dataset with 1000 cases and 4 variables is imputed for different `m` (starting from 6). Besides, multiple imputation with `parlMICE` is performed with 1, 2 and 3 cores. 
+### Time gain with small datasets
 
-![Processing time when multiple imputations are performed with `mice` (conventional) and wrapper function `parlMICE` (1, 2 and 3 cores respectively). The dataset has 1000 cases and 4 variables with a correlation of 0.5. 80 percent of the cases have one missing value based on MCAR missingness.](parlMICE.png)
+In Figure 1, the processing time is compared between `mice` and `parlMICE`. The simulated dataset has 1000 cases and 4 variables with covariance structure 
+
+\begin{equation*}
+\Sigma = 
+\begin{blockarray}{ccccc}
+& V_1 & V_2 & V_3 & V_4\\
+\begin{block}{c(cccc)}
+V_1&1&0.5&0.5&0.5\\
+V_2&0.5&1&0.5&0.5\\
+V_3&0.5&0.5&1&0.5\\
+V_4&0.5&0.5&0.5&1\\
+\end{block}
+\end{blockarray} .
+\end{equation*}
+
+A MCAR missingness mechanism is imposed on the data. In total, 80 percent of the cases (rows) has missingness on one variable. All variables have missing values. 
+
+Multiple imputation is performed with the default arguments of `mice`. The procedure with `parlMICE` is repeated for 1, 2 and 3 cores. The results are shown in Figure 1.  
+
+![Processing time for small datasets. Multiple imputatios are performed with `mice` (conventional) and wrapper function `parlMICE` (1, 2 and 3 cores respectively). The dataset has 1000 cases and 4 variables with a correlation of 0.5. 80 percent of the cases have one missing value based on MCAR missingness.](parlMICE.pdf)
 
 From Figure 1 it becomes apparent that for a small number of imputations, the conventional `mice` function works faster than the wrapper function. This is the case for `m` $\leq$ 35. From that point on, wrapper function `parlMICE` returns the imputations faster.
 
-The right figure of Figure 1 shows the processing time for very high number of imputations. After the intersection, the lines follow the same trend: 3 cores perform the work faster than 2 cores, which work faster than 1 core. Obviously, using `parlMICE` with 1 core is similar to function `mice`, as the figure shows with the red and blue lines.
+The right figure of Figure 1 shows the processing time for very high number of imputations. After the intersection, the lines follow the same trend: 3 cores perform the work faster than 2 cores, which work faster than 1 core. Naturally, using `parlMICE` with 1 core is similar to function `mice`, as the figure shows with the green and orange lines.
 
-Another test was run with a dataset with 10000 cases and 8 variables. For this dataset, `parlMICE` performed faster than `mice` starting from the first imputation. The time gain can easily reach 75 percent for 10 imputations and more.
+### Time gain with large datasets
+
+Another test was run with a (relatively) large dataset of 10000 cases and 8 variables. The covariance matrix was simply extended to the situation of 8 variables. In Figure 2, the results are shown. 
+
+![Processing time for large datasets. Multiple imputations are performed with `mice` (conventional) and wrapper function `parlMICE` (1, 2 and 3 cores respectively). The dataset has 10000 cases and 8 variables with a correlation of 0.5. 80 percent of the cases have one missing value based on MCAR missingness.](parlMICE2.pdf)
+
+Figure 2 shows that for all imputations, function `parlMICE` works faster than `mice`. Even for very small number of imputations, running `mice` in parallel with `parlMICE` saves a significant amount of time. This time gain can easily reach 70 percent for 10 imputations and more. 
+
+There is not a huge difference between using 2 and 3 cores with wrapper function `parlMICE`. For all number of imputations, the procedure runs faster with 3 cores, even though the imputations have to be divided over the cores. It might therefore be desirable to use always as many cores as possible (but always keep 1!). 
 
 ### Default settings
 
@@ -47,7 +75,7 @@ All other parts of the `mids` object are standard.
 
 ### Using `mice` arguments
 
-Function parlMICE is able to deal with the conventional `mice` arguments. In order to change the imputation method from its default (predictive mean matching) to, for example, Bayesian linear regression, the `method` argument can be adjusted.
+Function `parlMICE` is able to deal with the conventional `mice` arguments. In order to change the imputation method from its default (predictive mean matching) to, for example, Bayesian linear regression, the `method` argument can be adjusted. For other possibilities with `mice`, we refer to the [manual](https://cran.r-project.org/web/packages/mice/mice.pdf).
 
 ```{r}
 imp <- parlMICE(nhanes, method = "norm")
@@ -74,7 +102,7 @@ imp$m
 
 ### Argument `seed` 
 
-In simulation studies, it is often desired to set a seed to make the results reproducible. In contrast to `mice`, the seed value for `parlMICE` cannot be defined outside the function. This has to do with the different cores running at the same time (for more information we gladly refer to the `parallel` [manual](https://stat.ethz.ch/R-manual/R-devel/library/parallel/doc/parallel.pdf)). 
+In simulation studies, it is often desired to set a seed to make the results reproducible. In contrast to `mice`, the seed value for `parlMICE` cannot be defined outside the function. This has to do with the different cores running at the same time (for more information we gladly refer to the `Parallel` [manual](https://stat.ethz.ch/R-manual/R-devel/library/parallel/doc/parallel.pdf)). 
 
 A seed value can be used in `parlMICE` with argument `seed`: 
 
@@ -84,7 +112,7 @@ imp <- parlMICE(nhanes, seed = 123)
 
 ### Systems other than Windows
 
-Function `parlMICE` calls for function `parLapply` from the `parallel` [package](https://stat.ethz.ch/R-manual/R-devel/library/parallel/doc/parallel.pdf). Although other options are available, we have chosen for `parLapply` because it allows the use of multiple cores on all computers, including a Windows computer. For the cluster, we rely on the default option in the function `makeCluster`, which is `"PSOCK"`. 
+Function `parlMICE` calls for function `parLapply` from the `Parallel` [package](https://stat.ethz.ch/R-manual/R-devel/library/parallel/doc/parallel.pdf). Although other options are available, we have chosen for `parLapply` because it allows the use of multiple cores on all computers, including a Windows computer. For the cluster, we rely on the default option in the function `makeCluster`, which is `"PSOCK"`. 
 
 On systems other than Windows, cluster type `"FORK"` might be faster (see the [document](http://gforge.se/2015/02/how-to-go-parallel-in-r-basics-tips/) written by Max Gordon). Therefore, we advise to change the type to `"FORK"` if your computer does not run on Windows. 
 
@@ -97,6 +125,8 @@ imp <- parlMICE(nhanes, type = "FORK")
 Gordon, M. (2015). How-to go parallel in R – basics + tips. Available at [http://gforge.se/2015/02/how-to-go-parallel-in-r-basics-tips/](http://gforge.se/2015/02/how-to-go-parallel-in-r-basics-tips/)
 
 Manual base-package `Parallel`, available at [https://stat.ethz.ch/R-manual/R-devel/library/parallel/doc/parallel.pdf](https://stat.ethz.ch/R-manual/R-devel/library/parallel/doc/parallel.pdf)
+
+Manual package `MICE`, available at [https://cran.r-project.org/web/packages/mice/mice.pdf](https://cran.r-project.org/web/packages/mice/mice.pdf)
 
 
 
