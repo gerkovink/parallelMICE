@@ -28,7 +28,7 @@ plot2 <- ggplot(data = test2) +
 plot2
 
 list1 <- list(plot2, plot1)
-png("parlMICE.pdf", width = 680, height = 280)
+postscript("parlMICE.ps", width = 16, height=5)
 do.call(grid.arrange, c(list1, list(nrow = 1, ncol = 2)))
 dev.off()
 
@@ -59,6 +59,6 @@ plot4 <- ggplot(data = test4) +
 plot4
 
 list2 <- list(plot4, plot3)
-png("parlMICE2.pdf", width = 680, height = 280)
+postscript("parlMICE2.ps", width = 16, height=5)
 do.call(grid.arrange, c(list2, list(nrow = 1, ncol = 2)))
 dev.off()
