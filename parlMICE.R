@@ -42,7 +42,7 @@
 #'
 #'@return A mids object as defined by \code{\link{mids-class}}
 #'
-#'@author Gerko Vink, Rianne Schouten, 2016, with many thanks to Max Gordon. 
+#'@author Rianne Schouten, Gerko Vink, 2016, with many thanks to Max Gordon. 
 #'@seealso \code{\pkg{parallel}}, \code{\link{parLapply}}, \code{\link{makeCluster}},
 #'\code{\link{mice}}, \code{\link{mids-class}}, Vignette \emph{Wrapper function parlMICE}
 #'@references 
