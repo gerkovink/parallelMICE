@@ -1,12 +1,11 @@
 ---
 title: "Wrapper function `parlMICE`"
-author: "Gerko Vink & Rianne Schouten"
+author: "Rianne Schouten & Gerko Vink"
 date: "Monday, November 28th, 2016"
-output: pdf_document
+output: html_document
 header-includes:
 - \usepackage{caption}
 - \usepackage{natbib}
-bibliography: References.bib
 ---
 
 ```{r, include = FALSE}
@@ -17,7 +16,7 @@ require(gridExtra)
 source("parlMICE.R")
 ```
 
-For big datasets or high number of imputations, performing multiple imputation with function `mice` from package `mice` [@Stef2011] might take a long time. As a solution, wrapper function `parlMICE` was created to enable the imputation procedure to be run in parallel. This is done by dividing the imputations over multiple cores (or CPUs), thus potentially speeding up the process. 
+For big datasets or high number of imputations, performing multiple imputation with function `mice` from package `mice` (Van Buuren & Groothuis-Oudshoorn, 2011) might take a long time. As a solution, wrapper function `parlMICE` was created to enable the imputation procedure to be run in parallel. This is done by dividing the imputations over multiple cores (or CPUs), thus potentially speeding up the process. 
 
 This vignette demonstrates two applications of the `parlMICE` function. The first application shows the tradeoff between time and increasing number of imputations ($m$) for a small; the second application does the same, but for a relatively large dataset. We also discuss `parlMICE`'s arguments.
 
@@ -49,7 +48,7 @@ $$\Sigma = \left[\begin{array}
 \end{array}\right].
 $$
 
-A MCAR missingness mechanism is imposed on the data where 80 percent of the cases (i.e. rows) has missingness on one variable. All variables have missing values. The missingness is randomly generated with the following arguments from function [`mice:::ampute`](https://github.com/stefvanbuuren/mice/blob/ampute/vignettes/Vignette.pdf)
+A MCAR missingness mechanism is imposed on the data where 80 percent of the cases (i.e. rows) has missingness on one variable. All variables have missing values. The missingness is randomly generated with the following arguments from function [`mice:::ampute`](https://github.com/RianneSchouten/mice/blob/ampute/vignettes/Vignette_Ampute.pdf):
 
 ```{r, eval = FALSE, cache = TRUE}
 ampute(data, prop = 0.8)
@@ -61,7 +60,7 @@ We compare the default 'sequential' function `mice` with function `parlMICE`. In
 
 ```{r, echo = FALSE, warning = FALSE, message = FALSE, fig.width = 12, fig.height = 5, cache = TRUE}
 
-test1 <- read.csv("sim4_1000.csv")
+test1 <- read.csv("Simulation/sim4_1000.csv")
 test1["n.imp"] <- seq(6, 600, 6) * 3 
 plot1 <- ggplot(data = test1) + 
   geom_line(aes(x = n.imp, y = result1, color = "result1")) + 
@@ -74,7 +73,7 @@ plot1 <- ggplot(data = test1) +
   scale_colour_manual("Type", values = c("#009E73", "#D55E00", "#0072B2", "#CC79A7"), labels = c("Conv.", "1 Core", "2 Cores", "3 Cores")) + 
   theme(plot.title = element_text(hjust = 0.5))
 
-test2 <- read.csv("sim4_1000_2.csv")
+test2 <- read.csv("Simulation/sim4_1000_2.csv")
 test2["n.imp"] <- seq(6, 120, 6)
 plot2 <- ggplot(data = test2) + 
   geom_line(aes(x = n.imp, y = result1), color = "#009E73") + 
@@ -108,7 +107,7 @@ We replicated the above detailed simulation setup with a larger dataset of 10,00
 
 ```{r, echo = FALSE, warning = FALSE, message = FALSE, fig.width = 12, fig.height = 5, cache = TRUE}
 
-test3 <- read.csv("sim8_10000.csv")
+test3 <- read.csv("Simulation/sim8_10000.csv")
 test3["n.imp"] <- seq(6, 120, 6)
 plot3 <- ggplot(data = test3) + 
   geom_line(aes(x = n.imp, y = result1, color = "result1")) + 
@@ -121,7 +120,7 @@ plot3 <- ggplot(data = test3) +
   scale_colour_manual("Type", values = c("#009E73", "#D55E00", "#0072B2", "#CC79A7"), labels = c("Conv.", "1 Core", "2 Cores", "3 Cores")) + 
   theme(plot.title = element_text(hjust = 0.5))
 
-test4 <- read.csv("sim8_10000_2.csv")
+test4 <- read.csv("Simulation/sim8_10000_2.csv")
 test4["n.imp"] <- seq(6, 24, 6)
 plot4 <- ggplot(data = test4) + 
   geom_line(aes(x = n.imp, y = result1), color = "#009E73") + 
@@ -227,10 +226,13 @@ imp <- parlMICE(nhanes, type = "FORK")
 
 Gordon, M. (2015). How-to go parallel in R – basics + tips. Available at [http://gforge.se/2015/02/how-to-go-parallel-in-r-basics-tips/](http://gforge.se/2015/02/how-to-go-parallel-in-r-basics-tips/)
 
+Schouten, R.M., Lugtig, P.J. and Vink, G. (2016). Multiple amputation using ampute [manual]. Available at [https://github.com/RianneSchouten/mice/blob/ampute/vignettes/Vignette_Ampute.pdf](https://github.com/RianneSchouten/mice/blob/ampute/vignettes/Vignette_Ampute.pdf)
+
 Manual base-package `Parallel`, available at [https://stat.ethz.ch/R-manual/R-devel/library/parallel/doc/parallel.pdf](https://stat.ethz.ch/R-manual/R-devel/library/parallel/doc/parallel.pdf)
 
 Manual package `MICE`, available at [https://cran.r-project.org/web/packages/mice/mice.pdf](https://cran.r-project.org/web/packages/mice/mice.pdf)
 
+Van Buuren, S. and Groothuis-Oudshoorn, K. (2011). mice: Multivariate imputation by chained equations in R. \emph{Journal of Statistical Software}, 45 (3). 
 
 
 

@@ -9,7 +9,7 @@
 <meta name="generator" content="pandoc" />
 
 
-<meta name="author" content="Gerko Vink &amp; Rianne Schouten" />
+<meta name="author" content="Rianne Schouten &amp; Gerko Vink" />
 
 
 <title>Wrapper function parlMICE</title>
@@ -116,13 +116,13 @@ $(document).ready(function () {
 
 
 <h1 class="title toc-ignore">Wrapper function <code>parlMICE</code></h1>
-<h4 class="author"><em>Gerko Vink &amp; Rianne Schouten</em></h4>
+<h4 class="author"><em>Rianne Schouten &amp; Gerko Vink</em></h4>
 <h4 class="date"><em>Monday, November 28th, 2016</em></h4>
 
 </div>
 
 
-<p>For big datasets or high number of imputations, performing multiple imputation with function <code>mice</code> from package <code>mice</code> <span class="citation">(Van Buuren and Groothuis-Oudshoorn 2011)</span> might take a long time. As a solution, wrapper function <code>parlMICE</code> was created to enable the imputation procedure to be run in parallel. This is done by dividing the imputations over multiple cores (or CPUs), thus potentially speeding up the process.</p>
+<p>For big datasets or high number of imputations, performing multiple imputation with function <code>mice</code> from package <code>mice</code> (Van Buuren &amp; Groothuis-Oudshoorn, 2011) might take a long time. As a solution, wrapper function <code>parlMICE</code> was created to enable the imputation procedure to be run in parallel. This is done by dividing the imputations over multiple cores (or CPUs), thus potentially speeding up the process.</p>
 <p>This vignette demonstrates two applications of the <code>parlMICE</code> function. The first application shows the tradeoff between time and increasing number of imputations (<span class="math inline">\(m\)</span>) for a small; the second application does the same, but for a relatively large dataset. We also discuss <code>parlMICE</code>’s arguments.</p>
 <p>The function <code>parlMICE</code> depends on packages <code>parallel</code> and <code>mice</code>. For more information about running functions in parallel, we refer to the <code>parallel</code> <a href="https://stat.ethz.ch/R-manual/R-devel/library/parallel/doc/parallel.pdf">manual</a> and the document <a href="http://gforge.se/2015/02/how-to-go-parallel-in-r-basics-tips/"><em>How-to-go parallel in R</em></a> by Max Gordon. We also like to thank Max Gordon for his useful suggestions on parallelization of <code>mice</code>’s chains on <a href="http://stackoverflow.com/questions/24040280/parallel-computation-of-multiple-imputation-by-using-mice-r-package"><code>stackoverflow</code></a>.</p>
 <hr />
@@ -146,7 +146,7 @@ $(document).ready(function () {
 0.5&amp;0.5&amp;0.5&amp;1
 \end{array}\right].
 \]</span></p>
-<p>A MCAR missingness mechanism is imposed on the data where 80 percent of the cases (i.e. rows) has missingness on one variable. All variables have missing values. The missingness is randomly generated with the following arguments from function <a href="https://github.com/stefvanbuuren/mice/blob/ampute/vignettes/Vignette.pdf"><code>mice:::ampute</code></a></p>
+<p>A MCAR missingness mechanism is imposed on the data where 80 percent of the cases (i.e. rows) has missingness on one variable. All variables have missing values. The missingness is randomly generated with the following arguments from function <a href="https://github.com/RianneSchouten/mice/blob/ampute/vignettes/Vignette_Ampute.pdf"><code>mice:::ampute</code></a>:</p>
 <pre class="r"><code>ampute(data, prop = 0.8)</code></pre>
 <p>We compare the default ‘sequential’ function <code>mice</code> with function <code>parlMICE</code>. In both functions we use the defaults arguments for the <code>mice</code> algorithm, although these could very easily be changed if desired by the user. To demonstrate the increased efficiency when putting more than one computing core to work, we repeat the procedure with <code>parlMICE</code> for 1, 2 and 3 cores. Figure 1 shows a graphical representation of the results.</p>
 <hr />
@@ -226,13 +226,10 @@ imp$method</code></pre>
 <div id="references" class="section level3">
 <h3>References</h3>
 <p>Gordon, M. (2015). How-to go parallel in R – basics + tips. Available at <a href="http://gforge.se/2015/02/how-to-go-parallel-in-r-basics-tips/" class="uri">http://gforge.se/2015/02/how-to-go-parallel-in-r-basics-tips/</a></p>
+<p>Schouten, R.M., Lugtig, P.J. and Vink, G. (2016). Multiple amputation using ampute [manual]. Available at <a href="https://github.com/RianneSchouten/mice/blob/ampute/vignettes/Vignette_Ampute.pdf" class="uri">https://github.com/RianneSchouten/mice/blob/ampute/vignettes/Vignette_Ampute.pdf</a></p>
 <p>Manual base-package <code>Parallel</code>, available at <a href="https://stat.ethz.ch/R-manual/R-devel/library/parallel/doc/parallel.pdf" class="uri">https://stat.ethz.ch/R-manual/R-devel/library/parallel/doc/parallel.pdf</a></p>
 <p>Manual package <code>MICE</code>, available at <a href="https://cran.r-project.org/web/packages/mice/mice.pdf" class="uri">https://cran.r-project.org/web/packages/mice/mice.pdf</a></p>
-<div id="refs" class="references">
-<div id="ref-Stef2011">
-<p>Van Buuren, S., and C.G.M. Groothuis-Oudshoorn. 2011. “Mice: Multivariate Imputation by Chained Equations in R.” <em>Journal of Statistical Software</em> 45 (3).</p>
-</div>
-</div>
+<p>Van Buuren, S. and Groothuis-Oudshoorn, K. (2011). mice: Multivariate imputation by chained equations in R. , 45 (3).</p>
 </div>
 
 
