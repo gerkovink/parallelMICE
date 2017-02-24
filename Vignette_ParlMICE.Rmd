@@ -1,11 +1,13 @@
 ---
 title: "Wrapper function `parlMICE`"
 author: "Rianne Schouten & Gerko Vink"
-date: "Monday, November 28th, 2016"
+date: "faster, paralleler, micer"
 output: html_document
 header-includes:
 - \usepackage{caption}
 - \usepackage{natbib}
+---
+
 ---
 
 ```{r, include = FALSE}
@@ -20,7 +22,7 @@ For big datasets or high number of imputations, performing multiple imputation w
 
 This vignette demonstrates two applications of the `parlMICE` function. The first application shows the tradeoff between time and increasing number of imputations ($m$) for a small; the second application does the same, but for a relatively large dataset. We also discuss `parlMICE`'s arguments.
 
-The function `parlMICE` depends on packages `parallel` and `mice`. For more information about running functions in parallel, we refer to the `parallel` [manual](https://stat.ethz.ch/R-manual/R-devel/library/parallel/doc/parallel.pdf) and the document [*How-to-go parallel in R*](http://gforge.se/2015/02/how-to-go-parallel-in-r-basics-tips/) by Max Gordon. We also like to thank Max Gordon for his useful suggestions on parallelization of `mice`'s chains on [`stackoverflow`](http://stackoverflow.com/questions/24040280/parallel-computation-of-multiple-imputation-by-using-mice-r-package).
+The function `parlMICE` depends on packages `parallel` and `mice`. For more information about running functions in parallel, see e.g. [the `parallel` manual](https://stat.ethz.ch/R-manual/R-devel/library/parallel/doc/parallel.pdf) or the entry [*How-to-go parallel in R*](http://gforge.se/2015/02/how-to-go-parallel-in-r-basics-tips/) on Max Gordon's blog. Function `parlMICE` found its inspiration from Max's useful suggestions on parallelization of `mice`'s chains on [`stackoverflow`](http://stackoverflow.com/questions/24040280/parallel-computation-of-multiple-imputation-by-using-mice-r-package).
 
 ---
 
@@ -200,9 +202,9 @@ imp$m
 
 ### Argument `seed` 
 
-In simulation studies, it is often desired to set a seed to make the results reproducible. In contrast to `mice`, the seed value for `parlMICE` cannot be defined outside the function. This has to do with the different cores running at the same time (for more information we gladly refer to the `parallel` [manual](https://stat.ethz.ch/R-manual/R-devel/library/parallel/doc/parallel.pdf)). 
+In simulation studies, it is often desired to set a seed to make the results reproducible. In contrast to `mice`, the seed value for `parlMICE` cannot be defined outside the function. This has to do with the different cores running at the same time (for more information we gladly refer to the [`parallel` manual](https://stat.ethz.ch/R-manual/R-devel/library/parallel/doc/parallel.pdf)). 
 
-In `parlMICE` a seed vavlue can be specified by making use of the argument `seed`:
+In `parlMICE` a seed value can be specified by making use of the argument `seed`:
 
 ```{r, cache = TRUE}
 imp <- parlMICE(nhanes, seed = 123)
@@ -234,6 +236,9 @@ Manual package `MICE`, available at [https://cran.r-project.org/web/packages/mic
 
 Van Buuren, S. and Groothuis-Oudshoorn, K. (2011). mice: Multivariate imputation by chained equations in R. \emph{Journal of Statistical Software}, 45 (3). 
 
+---
+
+**End of Vignette**
 
 
 
