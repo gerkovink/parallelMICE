@@ -2,21 +2,16 @@
 require(mice)
 require(MASS)
 
-source("parlMICE.R")
-source("../mice/R/ampute.mcar.R")
-source("../mice/R/ampute.continuous.R")
-source("../mice/R/ampute.discrete.R")
-source("../mice/R/ampute.default.R")
-source("../mice/R/is.R")
-source("../mice/R/print.R")
-source("../mice/R/summary.R")
-source("../mice/R/mads.R")
-source("../mice/R/ampute.R")
+source("GitHub/parlMICE/parlMICE.R")
+source("GitHub/parlMICE/Simulation/SimulationFunctions.R")
 
-source("Simulation/simulation_functions.R")
+ms <- seq(6, 600, 6) * 3 
+source("GitHub/parlMICE/Simulation/simulation_4var_1000_Cases.R")
 
-ms <- 
+ms <- seq(6, 120, 6)
+source("GitHub/parlMICE/Simulation/simulation_4var_1000_Cases_Zoom.R")
+source("GitHub/parlMICE/Simulation/simulation_8var_10000_Cases.R")
 
-#source("Simulation/simulation_4var_1000cases.R")
-#source("Simulation/simulation_8var_10000cases.R")
+ms <- seq(6, 24, 6)
+source("GitHub/parlMICE/Simulation/simulation_8var_10000_Cases_Zoom.R")
 

@@ -2,3 +2,4 @@ base
 mice
 ggplot2
 gridExtra
+lattice

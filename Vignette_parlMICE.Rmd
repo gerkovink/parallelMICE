@@ -50,10 +50,15 @@ $$\Sigma = \left[\begin{array}
 \end{array}\right].
 $$
 
-A MCAR missingness mechanism is imposed on the data where 80 percent of the cases (i.e. rows) has missingness on one variable. All variables have missing values. The missingness is randomly generated with the following arguments from function [`mice:::ampute`](https://github.com/RianneSchouten/mice/blob/ampute/vignettes/Vignette_Ampute.pdf):
+A MCAR missingness mechanism is imposed on the data where 80 percent of the cases (i.e. rows) has missingness on one variable. All variables have missing values. The missingness is randomly generated with the following arguments from function [`mice:::ampute`](https://github.com/RianneSchouten/Amputation_with_Ampute/tree/master/Vignette):
 
 ```{r, eval = FALSE, cache = TRUE}
 ampute(data, prop = 0.8)
+
+# EDIT: 
+# At the time of running these simulations, the defaults in ampute 
+# resulted in MCAR missingness. The new defaults of ampute 
+# generate MARRIGHT missingness.
 ```
 
 We compare the default 'sequential' function `mice` with function `parlMICE`. In both functions we use the defaults arguments for the `mice` algorithm, although these could very easily be changed if desired by the user. To demonstrate the increased efficiency when putting more than one computing core to work, we repeat the procedure with `parlMICE` for 1, 2 and 3 cores. Figure 1 shows a graphical representation of the results.  
@@ -63,25 +68,25 @@ We compare the default 'sequential' function `mice` with function `parlMICE`. In
 ```{r, echo = FALSE, warning = FALSE, message = FALSE, fig.width = 12, fig.height = 5, cache = TRUE}
 
 test1 <- read.csv("Simulation/sim4_1000.csv")
-test1["n.imp"] <- seq(6, 600, 6) * 3 
+test1["ms"] <- seq(6, 600, 6) * 3 
 plot1 <- ggplot(data = test1) + 
-  geom_line(aes(x = n.imp, y = result1, color = "result1")) + 
-  geom_line(aes(x = n.imp, y = result2, color = "result2")) + 
-  geom_line(data = test1[1:50, ], aes(x = n.imp * 2, y = result3, color = "result3")) +
-  geom_line(data = test1[1:34, ],aes(x = n.imp * 3, y = result4, color = "result4")) +
+  geom_line(aes(x = ms, y = result1, color = "result1")) + 
+  geom_line(aes(x = ms, y = result2, color = "result2")) + 
+  geom_line(data = test1[1:50, ], aes(x = ms * 2, y = result3, color = "result3")) +
+  geom_line(data = test1[1:34, ],aes(x = ms * 3, y = result4, color = "result4")) +
   xlab("Number of imputations") + 
   ylab("") + 
   ggtitle("Time comparison with small dataset") +
   scale_colour_manual("Type", values = c("#009E73", "#D55E00", "#0072B2", "#CC79A7"), labels = c("Conv.", "1 Core", "2 Cores", "3 Cores")) + 
   theme(plot.title = element_text(hjust = 0.5))
 
-test2 <- read.csv("Simulation/sim4_1000_2.csv")
-test2["n.imp"] <- seq(6, 120, 6)
+test2 <- read.csv("Simulation/sim4_1000_zoom.csv")
+test2["ms"] <- seq(6, 120, 6)
 plot2 <- ggplot(data = test2) + 
-  geom_line(aes(x = n.imp, y = result1), color = "#009E73") + 
-  geom_line(aes(x = n.imp, y = result2), color = "#D55E00") + 
-  geom_line(aes(x = n.imp, y = result3), color = "#0072B2") +
-  geom_line(aes(x = n.imp, y = result4), color = "#CC79A7") +
+  geom_line(aes(x = ms, y = result1), color = "#009E73") + 
+  geom_line(aes(x = ms, y = result2), color = "#D55E00") + 
+  geom_line(aes(x = ms, y = result3), color = "#0072B2") +
+  geom_line(aes(x = ms, y = result4), color = "#CC79A7") +
   xlab("Number of imputations") + 
   ylab("Time in seconds") + 
   ggtitle("Time comparison with small dataset") + 
@@ -110,25 +115,25 @@ We replicated the above detailed simulation setup with a larger dataset of 10,00
 ```{r, echo = FALSE, warning = FALSE, message = FALSE, fig.width = 12, fig.height = 5, cache = TRUE}
 
 test3 <- read.csv("Simulation/sim8_10000.csv")
-test3["n.imp"] <- seq(6, 120, 6)
+test3["ms"] <- seq(6, 120, 6)
 plot3 <- ggplot(data = test3) + 
-  geom_line(aes(x = n.imp, y = result1, color = "result1")) + 
-  geom_line(aes(x = n.imp, y = result2, color = "result2")) + 
-  geom_line(aes(x = n.imp, y = result3, color = "result3")) +
-  geom_line(aes(x = n.imp, y = result4, color = "result4")) +
+  geom_line(aes(x = ms, y = result1, color = "result1")) + 
+  geom_line(aes(x = ms, y = result2, color = "result2")) + 
+  geom_line(aes(x = ms, y = result3, color = "result3")) +
+  geom_line(aes(x = ms, y = result4, color = "result4")) +
   xlab("Number of imputations") + 
   ylab("") + 
   ggtitle("Time comparison with large dataset") + 
   scale_colour_manual("Type", values = c("#009E73", "#D55E00", "#0072B2", "#CC79A7"), labels = c("Conv.", "1 Core", "2 Cores", "3 Cores")) + 
   theme(plot.title = element_text(hjust = 0.5))
 
-test4 <- read.csv("Simulation/sim8_10000_2.csv")
-test4["n.imp"] <- seq(6, 24, 6)
+test4 <- read.csv("Simulation/sim8_10000_zoom.csv")
+test4["ms"] <- seq(6, 24, 6)
 plot4 <- ggplot(data = test4) + 
-  geom_line(aes(x = n.imp, y = result1), color = "#009E73") + 
-  geom_line(aes(x = n.imp, y = result2), color = "#D55E00") + 
-  geom_line(aes(x = n.imp, y = result3), color = "#0072B2") +
-  geom_line(aes(x = n.imp, y = result4), color = "#CC79A7") +
+  geom_line(aes(x = ms, y = result1), color = "#009E73") + 
+  geom_line(aes(x = ms, y = result2), color = "#D55E00") + 
+  geom_line(aes(x = ms, y = result3), color = "#0072B2") +
+  geom_line(aes(x = ms, y = result4), color = "#CC79A7") +
   xlab("Number of imputations") +
   ylab("Time in seconds") + 
   ggtitle("Time comparison with large dataset") + 
