@@ -6,7 +6,11 @@ sigma <- matrix(data = c(1, .5, .5, .5,
 data <- mvrnorm(n = 1000, 
                 mu = rep(0, 4),
                 Sigma = sigma)
+
 amp <- ampute(data, prop = 0.8)$amp
+# At the time of running these simulations, 
+# the defaults in ampute resulted in MCAR missingness. The new defaults of ampute 
+# generate MARRIGHT missingness
 
 result1 <- run.conventional(amp, ms = ms)
 cat("conv")
@@ -17,6 +21,6 @@ cat("par2")
 result4 <- run.parallel(amp, ms = ms, n.core = 3)
 cat("par3")
 
-out_4_1000_2 <- cbind(result1, result2, result3, result4)
-write.table(out_4_1000_2, "Simulation/sim4_1000_2.csv", sep = ',')
+out_4_1000 <- cbind(result1, result2, result3, result4)
+write.table(out_4_1000, "Simulation/sim4_1000.csv", sep = ',')
 
