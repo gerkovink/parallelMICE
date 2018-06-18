@@ -37,6 +37,10 @@
 #'@param seed A scalar to be used as the seed value. It is recommended to put the 
 #'seed value here and not outside this function, as otherwise the parallel processes
 #'will be performed with separate, random seeds. 
+#'@param mice.seed A scalar to be used as the seed value within function 
+#'\code{\link{mice}}. When \code{seed} is given a value, \code{n.core = 1} and 
+#'\code{m} is similar, setting \code{mice.seed} in \code{parlmice} will give 
+#'the same result as \code{\link{mice()}}.
 #'@param ... Named arguments that are passed down to function \code{\link{mice}} or
 #'\code{\link{makeCluster}}. 
 #'
@@ -62,19 +66,19 @@
 #' 
 #'@export
 parlMICE <- function(data, n.core = detectCores() - 1, n.imp.core = 2,  
-                     seed = NULL, m = NULL, ...){
+                     seed = NA, m = NULL, mice.seed = NA, ...){
   suppressMessages(require(parallel))
   cl <- makeCluster(n.core, ...)
   clusterExport(cl, varlist = "data", envir = environment())
   clusterEvalQ(cl, library(mice))
-  if (!is.null(seed)) {
+  if (!is.na(seed)) {
     clusterSetRNGStream(cl, seed)
   }
   if (!is.null(m)) {
     n.imp.core <- ceiling(m / n.core)
   }
   imps <- parLapply(cl = cl, X = 1:n.core, fun = function(i){
-    mice(data, print = FALSE, m = n.imp.core, ...)
+    mice(data, print = FALSE, m = n.imp.core, seed = mice.seed, ...)
     })
   stopCluster(cl)
   imp <- imps[[1]]
