@@ -1,4 +1,17 @@
-# parlMICE
+# parlMICE is now part of `mice` in `R`. 
+
+**There is an improved version of `parlMICE`: `mice::parlmice`. Development of `parlmice` will not continue on `gerkovink/parlMICE`, but rather move to `mice` development. No need to keep them seperated.**
+
+**All the best,**
+
+**[Gerko](https://www.gerkovink.com) and [Rianne](https://github.com/RianneSchouten)**
+
+The latest (development) version of `mice` can be installed by running
+
+```
+install.packages("devtools")
+devtools::install_github(repo = "stefvanbuuren/mice")
+```
 
 ---
 
@@ -8,9 +21,6 @@ Please refer to [this vignette](https://gerkovink.github.io/parlMICE/Vignette_pa
 
 ---
 
-All the best, 
-
-[Gerko](https://www.gerkovink.com) and [Rianne](https://github.com/RianneSchouten)
 
 ---
 
