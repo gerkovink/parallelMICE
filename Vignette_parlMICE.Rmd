@@ -233,7 +233,7 @@ imp <- parlMICE(nhanes, type = "FORK")
 
 Gordon, M. (2015). How-to go parallel in R – basics + tips. Available at [http://gforge.se/2015/02/how-to-go-parallel-in-r-basics-tips/](http://gforge.se/2015/02/how-to-go-parallel-in-r-basics-tips/)
 
-Schouten, R.M., Lugtig, P.J. and Vink, G. (2016). Multiple amputation using ampute [manual]. Available at [https://github.com/RianneSchouten/mice/blob/ampute/vignettes/Vignette_Ampute.pdf](https://github.com/RianneSchouten/mice/blob/ampute/vignettes/Vignette_Ampute.pdf)
+Schouten, R.M., Lugtig, P.J. and Vink, G. (last update: 2020). Generate missing values with `ampute`. Available at [https://rianneschouten.github.io/mice_ampute/vignette/ampute.html](https://rianneschouten.github.io/mice_ampute/vignette/ampute.html)
 
 Manual base-package `Parallel`, available at [https://stat.ethz.ch/R-manual/R-devel/library/parallel/doc/parallel.pdf](https://stat.ethz.ch/R-manual/R-devel/library/parallel/doc/parallel.pdf)
 
